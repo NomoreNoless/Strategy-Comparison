@@ -43,6 +43,7 @@ BinbyFactor <- function(matrix,Factors,percentage,default_bins=default_bins){
         bin_factor <- paste0("bin_",factor)
         bin_factor_quo <- rlang::sym(bin_factor)
         
+        #use labels=FALSE to use integer to identify the group, this way when use group_by the result will be automatically order by number
         matrix <- matrix %>% mutate(rlang::UQ(bin_factor_quo) := cut(rlang::UQ(factor_quo),default_bins[[factor]],include.lowest=TRUE))
       }
       
@@ -56,7 +57,7 @@ BinbyFactor <- function(matrix,Factors,percentage,default_bins=default_bins){
         temp <- matrix %>% filter(!is.na(rlang::UQ(factor_quo)))
         if(dim(temp)[1]>0){
           matrix <- matrix %>% mutate(RowNumber = row_number(rlang::UQ(factor_quo)))
-          matrix <- matrix %>% mutate(rlang::UQ(bin_factor_quo) := cut(RowNumber,num_of_bin,include.lowest=TRUE))
+          matrix <- matrix %>% mutate(rlang::UQ(bin_factor_quo) := cut(RowNumber,num_of_bin,labels=FALSE,include.lowest=TRUE))
         }
         else{
           matrix[,bin_factor] <- NA
@@ -112,7 +113,7 @@ BinbyFactor <- function(matrix,Factors,percentage,default_bins=default_bins){
         temp <- matrix %>% filter(!is.na(rlang::UQ(factor_quo)))
         if(dim(temp)[1]>0){
           
-          matrix <- matrix %>% mutate(rlang::UQ(bin_factor_quo) := cut(rlang::UQ(factor_quo),default_bins[[factor]],include.lowest=TRUE))
+          matrix <- matrix %>% mutate(rlang::UQ(bin_factor_quo) := cut(rlang::UQ(factor_quo),default_bins[[factor]],labels=FALSE,include.lowest=TRUE))
           
         }
         else{

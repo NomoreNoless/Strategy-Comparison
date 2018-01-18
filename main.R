@@ -19,7 +19,6 @@ source("LoadFactors.R")
 source("LoadFactors2.R")
 source("LoadBins.R")
 source("BinbyFactor.R")
-source("FilterData.R")
 source("LoadBenchmark.R")
 source("Cumulative.R")
 source("EvaluatePerformance_1vs1.R")
@@ -31,6 +30,7 @@ source("load_msgs.R")
 source("Limit_condition_filter.R")
 source("Load_compound_variables.R")
 source("MannWhitney_test.R")
+source("EvaluatePerformance_reverse.R")
 
 #__________________________________________________________________________
 con1 <- DBI::dbConnect(odbc::odbc(),
@@ -185,8 +185,8 @@ dataset <- LoadVariables(dataset)
 #selected_list <- LoadFactors(Factors = c("duration","Vduration","Eduration","adv","TopBook_to_OrderSize","Volume_to_TopBook","size_pct_vol","realpart","spread_bps","mid_range_bps","return_pct","PILOT_SECURITY"),PerformanceMetric = "VWAP_Slip_bps",dataset,benchmark=0)
 
 #Performance metric: cancel_rate
-selected_list <- LoadFactors(Factors=c("start_time","end_time","VWAP_Slip_bps","cancel_cost_bps","fill_ratio","effective_spread_tics","effective_spread_bps","duration_sec","duration_exe","duration_vol","adv","size_pct","real_part","book_size","vol_book","spread_bps","spread_tic","midrange_pct","return_pct","notional","PILOT_SECURITY",
-                                       "spread","midrange","midrange_spread","mark","book","exec_ct","TICK_SIZE_USE"),PerformanceMetric = "cancel_rate",dataset,0)
+selected_list <- LoadFactors(Factors=c("VWAP_Slip_bps","cancel_cost_bps","fill_ratio","effective_spread_tics","effective_spread_bps","duration_sec","duration_exe","duration_vol","adv","size_pct","real_part","book_size","vol_book","spread_bps","spread_tic","midrange_pct","return_pct","notional",
+                                       "spread","midrange","midrange_spread","mark","book","exec_ct"),PerformanceMetric = "cancel_rate",dataset,0)
 
 #___________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
@@ -256,7 +256,9 @@ binned_dataset <- BinbyFactor(temp_matrix,c(selected_list$Factors,selected_list$
 #benchmark <- LoadBenchmark("EVWAP",PerformanceMetric = "VWAP_Slip_bps")
 
 EvaluatePerformance_1vsB(binned_dataset,selected_list$Factors,selected_list$PerformanceMetric,benchmark=0.5,method="weighted",percentage=0.1,filename=filename,default_bins)
-EvaluatePerformance_reverse(binned_dataset,selected_list$Factors,selected_list$PerformanceMetric,benchmark=0.5,method="straight",percentage=0.1,filename=filename,default_bins)
+
+#Put Performance Metric on the X-axis
+EvaluatePerformance_reverse(binned_dataset,selected_list$Factors,selected_list$PerformanceMetric,method="weighted",percentage=0.1,filename=filename,default_bins)
 
 
 
